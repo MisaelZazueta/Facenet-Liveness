@@ -1,3 +1,6 @@
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 from scipy.spatial.distance import cosine
 from keras.models import load_model
 from utils import *
@@ -8,7 +11,7 @@ def recognize(img,
               encoder,
               items,
               boxes,
-              recognition_t=0.25,
+              recognition_t=0.30,
               confidence_t=0.99,
               required_size=(160, 160), ):
     #img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -42,27 +45,29 @@ def recognize(img,
 
 
 if __name__ == '__main__':
-    encoder_model = 'model/facenet_keras.h5'
-    encodings_path = 'encodings/encodings.pkl'
+    encoder_model = r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceNet/model/facenet_keras.h5'
+    encodings_path = r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceNet/encodings/encodings.pkl'
     #face_detector = mtcnn.MTCNN()
     #face_detector = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
     face_encoder = load_model(encoder_model)
     encoding_dict = load_pickle(encodings_path)
     items = encoding_dict.items()
 
-    vc = cv2.VideoCapture(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\test.mp4')
+    vc = cv2.VideoCapture(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/test.mp4')
+    #vc = cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=640, height=480, format=(string)NV12, framerate=(fraction)20/1 ! nvvidconv flip-method=rotate-180 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink' , cv2.CAP_GSTREAMER)
     while True:
         ret, frame = vc.read()
-        st = time.time()
         if not ret:
             print("no frame:(")
             break
+        frame = cv2.rotate(frame, cv2.cv2.ROTATE_90_CLOCKWISE)
+        st = time.time()
         boxes = liveness(frame)
         if boxes:
             frame = recognize(frame, face_encoder, items, boxes)
         cv2.imshow('Camera', frame)
-        print('Total')
-        print(time.time() - st)
+        print("Total")
+        print(time.time()-st)
         k = cv2.waitKey(1)
         if k % 256 == 27:
             break

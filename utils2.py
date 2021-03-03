@@ -10,8 +10,9 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score #calculate accuracy
 import time
-import Cython
-from loop import *
+from fastloop import loop
+#import Cython
+#from loop import *
 
 
 
@@ -32,13 +33,11 @@ def enhance_face(image):
     image_arr = np.array(image)
     image_arr = image_arr.ravel()
     image_list = list(image_arr)
-    st = time.time()
     f_x = {}
+    f_x = loop(f_x, image_arr)
     #for i in range(256):
         #f_x[i] = image_list.count(i)
-    loop(f_x, image_list)
-    print('loop Time')
-    print(time.time() - st)
+    #loop(f_x, image_list)
     F_x = {}
     G_x = {}
     for i in range(256):
@@ -76,7 +75,7 @@ def preparing_dataset_images(number_points, radius):
     labels = []
     data = []
     # loop over the training images
-    for imagePath in paths.list_images(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\FaceLiveness\Dataset'):
+    for imagePath in paths.list_images(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceLiveness/Dataset'):
         print(imagePath)
         # load the image, convert it to grayscale
         image = Image.open(imagePath).convert('L')
@@ -97,13 +96,13 @@ def save_liveness_detection_database(number_points, radius):
     start_preparing_database = time.time()
     database = preparing_dataset_images(number_points, radius)
     end_preparing_database = time.time()
-    with open(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\FaceLiveness\liveness_detection_database.pkl', 'wb') as outfile:
+    with open(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceLiveness/liveness_detection_database.pkl', 'wb') as outfile:
         pickle.dump(database, outfile)
     print(f"Preparing database was done in {end_preparing_database - start_preparing_database} seconds")
     
 # function for loading database for implementing classification tasks
 def load_liveness_detection_database():
-    with open(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\FaceLiveness\liveness_detection_database.pkl', 'rb') as infile:
+    with open(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceLiveness/liveness_detection_database.pkl', 'rb') as infile:
         database = pickle.load(infile)
     return database
 
@@ -119,7 +118,7 @@ def train_svm_and_save_it():
     end_training_time = time.time()
     print(f"Training the model was done in {end_training_time - start_training_time} seconds")
 
-    with open(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\FaceLiveness\svm_clf.pkl', 'wb') as outfile:
+    with open(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceLiveness/svm_clf.pkl', 'wb') as outfile:
         pickle.dump(model, outfile)
 
     predicted = model.predict(data_test)
@@ -127,7 +126,7 @@ def train_svm_and_save_it():
     print(f"Accuracy is {model_accuracy}")
 # function for loading the classifier
 def load_svm_clf():
-    with open(r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\FaceLiveness\svm_clf.pkl', 'rb') as infile:
+    with open(r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/FaceLiveness/svm_clf.pkl', 'rb') as infile:
         model = pickle.load(infile)
     return model
 

@@ -8,7 +8,7 @@ import time
 number_points = 8
 radius = 2
 font_path = 'FaceLiveness/simhei.ttf'
-face_haar_file = r'C:\Users\Usuari0\Desktop\Misael Zazueta\Maestria en Ciencias\Proyecto de tesis\Codigos\Facenet-Liveness\haarcascade_frontalface_default.xml'
+face_haar_file = r'/home/misaelzazueta/PycharmProjects/Facenet-Liveness/haarcascade_frontalface_default.xml'
 
 #load the classifier for real-time accomplishment
 model = load_svm_clf()
@@ -20,7 +20,7 @@ def liveness (frame):
     #ret, frame = cap.read()
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    faces = face_cascade.detectMultiScale(gray, scaleFactor =  1.5, minNeighbors = 5)
+    faces = face_cascade.detectMultiScale(gray)
     for (x,y,w,h) in faces:
         #cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
         face = gray[y:y+h, x:x+w]
